@@ -67,6 +67,8 @@ abstract class Column {
 
   def valueType: ValueType.Type
 
+  def defaultValue: Any
+
   def valueToString(value: Any): String
 
   def valueFromString(str: String): Any
@@ -96,6 +98,8 @@ class IntColumn(val shortName: String, val fullName: String) extends Column {
   def valueFromString(str: String) = str.toInt
 
   def valueType = ValueType.Integer
+
+  def defaultValue = 0
 }
 
 class DoubleColumn(val shortName: String, val fullName: String) extends Column {
@@ -106,6 +110,8 @@ class DoubleColumn(val shortName: String, val fullName: String) extends Column {
   def valueFromString(str: String) = str.toDouble
 
   def valueType = ValueType.Double
+
+  def defaultValue = 0.0
 }
 
 class StringColumn(val shortName: String, val fullName: String) extends Column {
@@ -118,5 +124,7 @@ class StringColumn(val shortName: String, val fullName: String) extends Column {
   def valueFromString(str: String) = str
 
   def valueType = ValueType.String
+
+  def defaultValue = ""
 
 }
