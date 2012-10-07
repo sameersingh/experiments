@@ -20,10 +20,14 @@ class Point(val spec: Spec) {
     map(colId) = value
   }
 
+  def +=(shortName: String, value: Any): Unit = {
+    +=(spec.getId(shortName), value)
+  }
+
   def toLine: String = {
     val sb = new StringBuffer()
     var first = true
-    for (value: Pair[Int, Any] <- map) {
+    for (value: Pair[Int, Any] <- map.toList.sortBy(_._1)) {
       if (first) {
         sb.append("%d:%s".format(value._1, spec(value._1).valueToString(value._2)))
         first = false

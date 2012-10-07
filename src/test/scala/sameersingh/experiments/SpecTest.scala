@@ -11,21 +11,11 @@ import rules.TemporaryFolder
 @Test
 class SpecTest {
 
-  val spec = {
-    val s = new Spec
-    s.addIntColumn("id", "Id")
-    s.addIntColumn("run", "Run")
-    s.addStringColumn("expType", "Experiment Type")
-    s.addDoubleColumn("score", "Score")
-    s
-  }
-
-  @Rule
-  def tempFolder = new TemporaryFolder()
-
   @Test
-  def testWrite() = {
-    val testFile = tempFolder.newFile("test.spec")
+  def testWrite(): Unit = {
+    val testFile = java.io.File.createTempFile("test", "spec")
+    println(testFile.getCanonicalPath)
+    val spec = SpecTest.spec
     spec.toFile(testFile.getAbsolutePath)
     val newSpec = new Spec
     newSpec.fromFile(testFile.getAbsolutePath)
@@ -36,4 +26,15 @@ class SpecTest {
       println(col.toLine)
   }
 
+}
+
+object SpecTest {
+  def spec = {
+    val s = new Spec
+    s.addIntColumn("id", "Id")
+    s.addIntColumn("run", "Run")
+    s.addStringColumn("expType", "Experiment Type")
+    s.addDoubleColumn("score", "Score")
+    s
+  }
 }

@@ -19,7 +19,7 @@ class Spec {
   def +=(col: Column): Unit = {
     columns += col
     assert(!shortNameMap.contains(col.shortName))
-    shortNameMap(col.shortName) = columns.length
+    shortNameMap(col.shortName) = columns.length - 1
   }
 
   def addIntColumn(shortName: String, fullName: String) = {
