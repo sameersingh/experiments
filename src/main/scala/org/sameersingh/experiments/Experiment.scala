@@ -1,4 +1,4 @@
-package sameersingh.experiments
+package org.sameersingh.experiments
 
 import collection.mutable.{ArrayBuffer, Seq}
 import io.Source

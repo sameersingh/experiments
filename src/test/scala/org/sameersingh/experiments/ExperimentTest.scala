@@ -1,4 +1,4 @@
-package sameersingh.experiments
+package org.sameersingh.experiments
 
 import org.junit._
 import Assert._
