@@ -7,13 +7,23 @@ import collection.mutable.HashMap
  * @author sameer
  * @date 10/6/12
  */
-class Point(val spec: Spec) {
+case class Point(val spec: Spec) {
   // map of column id to the data
   val map = new HashMap[Int, Any]
 
   def apply(colId: Int): Any = map(colId)
 
+  def apply(shortName: String): Any = map(spec.getId(shortName))
+
+  def double(colId: Int) = spec(colId).valueToDouble(this(colId))
+
   def value[T](colId: Int): T = map(colId).asInstanceOf[T]
+
+  def value[T](shortName: String): T = value[T](spec.getId(shortName))
+
+  def update(colId: Int, value: Any): Any = map(colId) = value
+
+  def update(shortName: String, value: Any): Any = this +=(shortName, value)
 
   def +=(colId: Int, value: Any): Unit = {
     assert(!map.contains(colId))
@@ -42,6 +52,13 @@ class Point(val spec: Spec) {
       point +=(colId, this(colId))
     }
     point
+  }
+
+  override def hashCode() = map.hashCode()
+
+  override def equals(p1: Any) = p1 match {
+    case p: Point => (p.spec equals spec) && (p.map equals map)
+    case _ => false
   }
 }
 

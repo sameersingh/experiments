@@ -1,6 +1,6 @@
 package org.sameersingh.experiments
 
-import collection.mutable.{ArrayBuffer, Seq}
+import collection.mutable.ArrayBuffer
 import io.Source
 import java.io.{FileOutputStream, FileInputStream, PrintWriter}
 import java.util.zip.{GZIPOutputStream, GZIPInputStream}
@@ -47,6 +47,10 @@ class Experiment(val spec: Spec) extends mutable.Buffer[Point] {
     writer.flush
     writer.close
   }
+
+  def values[T](colId: Int): Seq[T] = points.map(_.value[T](colId)).toSeq
+
+  def values[T](shortName: String): Seq[T] = values[T](spec.getId(shortName))
 
   // Seq methods
   def update(idx: Int, elem: Point) { points.update(idx, elem) }
