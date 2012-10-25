@@ -57,15 +57,17 @@ class AggregatePoint(val fixed: Point) {
 }
 
 object AggregateExperiments {
-  def aggregate(exps: Seq[Experiment], fixedCols: Seq[String], aggrOver: Seq[String]): Seq[AggregatePoint] = {
+  def aggregate(exps: Seq[Experiment], fixedCols: Seq[String], aggrOver: Seq[String], cond: (Point) => Boolean = p => true): Seq[AggregatePoint] = {
     val aggre: HashMap[Point, AggregatePoint] = new HashMap
     val fixedColIds = fixedCols.map(exps.head.spec.getId(_))
     val aggrOverIds = aggrOver.map(exps.head.spec.getId(_))
     for (exp <- exps) {
       for (p <- exp.points) {
-        val fixed = p.copyTrunc(fixedColIds)
-        val toAggr = p.copyTrunc(aggrOverIds)
-        aggre.getOrElseUpdate(fixed, new AggregatePoint(fixed)).accumulate(toAggr)
+        if (cond(p)) {
+          val fixed = p.copyTrunc(fixedColIds)
+          val toAggr = p.copyTrunc(aggrOverIds)
+          aggre.getOrElseUpdate(fixed, new AggregatePoint(fixed)).accumulate(toAggr)
+        }
       }
     }
     aggre.values.toSeq
@@ -94,7 +96,7 @@ object AggregateExperiments {
     agg
   }
 
-  def fromFile(spec:Spec, filename: String, gzip: Boolean = false): Seq[AggregatePoint] = {
+  def fromFile(spec: Spec, filename: String, gzip: Boolean = false): Seq[AggregatePoint] = {
     val source = if (gzip) Source.fromInputStream(new GZIPInputStream(new FileInputStream(filename))) else Source.fromFile(filename)
     source.getLines().grouped(5).map(ls => fromLines(spec, ls)).toSeq
   }
