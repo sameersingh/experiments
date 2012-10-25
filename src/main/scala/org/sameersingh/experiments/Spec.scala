@@ -34,6 +34,14 @@ class Spec {
     this += new StringColumn(shortName, fullName)
   }
 
+  def addBooleanColumn(shortName: String, fullName: String) = {
+    this += new BooleanColumn(shortName, fullName)
+  }
+
+  def addCategoricalColumn(shortName: String, fullName: String, values: Seq[String]) = {
+    this += new CategoricalColumn(shortName, fullName, values)
+  }
+
   def getId(shortName: String) = shortNameMap(shortName)
 
   def apply(shortName: String): Column = apply(shortNameMap(shortName))
@@ -57,7 +65,7 @@ class Spec {
 
 object ValueType extends Enumeration {
   type Type = Value
-  val Integer, Double, String = Value
+  val Integer, Double, String, Boolean, Categorical = Value
 }
 
 abstract class Column {
@@ -81,13 +89,24 @@ abstract class Column {
 object Column {
   def readFromLine(string: String): Column = {
     val split = string.split("\t")
-    assert(split.length == 3)
     val shortName = split(1)
     val fullName = split(2)
     ValueType.withName(split(0)) match {
-      case ValueType.Integer => new IntColumn(shortName, fullName)
-      case ValueType.Double => new DoubleColumn(shortName, fullName)
-      case ValueType.String => new StringColumn(shortName, fullName)
+      case ValueType.Integer =>
+        assert(split.length == 3)
+        new IntColumn(shortName, fullName)
+      case ValueType.Double =>
+        assert(split.length == 3)
+        new DoubleColumn(shortName, fullName)
+      case ValueType.String =>
+        assert(split.length == 3)
+        new StringColumn(shortName, fullName)
+      case ValueType.Boolean =>
+        assert(split.length == 3)
+        new BooleanColumn(shortName, fullName)
+      case ValueType.Categorical =>
+        assert(split.length >= 4)
+        new CategoricalColumn(shortName, fullName, split.drop(3).toSeq) // rest are values
     }
   }
 }
@@ -100,8 +119,8 @@ class IntColumn(val shortName: String, val fullName: String) extends Column {
   def valueFromString(str: String) = str.toInt
 
   def valueToDouble(value: Any) = value match {
-      case i: Int => i.toDouble
-    }
+    case i: Int => i.toDouble
+  }
 
   def valueType = ValueType.Integer
 
@@ -116,8 +135,8 @@ class DoubleColumn(val shortName: String, val fullName: String) extends Column {
   def valueFromString(str: String) = str.toDouble
 
   def valueToDouble(value: Any) = value match {
-      case d: Double => d
-    }
+    case d: Double => d
+  }
 
   def valueType = ValueType.Double
 
@@ -125,7 +144,7 @@ class DoubleColumn(val shortName: String, val fullName: String) extends Column {
 }
 
 class StringColumn(val shortName: String, val fullName: String) extends Column {
-  System.err.println("WARNING: String columns should not contain tabs, new lines and colons (:).")
+  System.err.println("WARNING(unchecked): String columns should not contain tabs, new lines and colons (:).")
 
   def valueToString(value: Any) = value match {
     case str: String => str
@@ -139,4 +158,45 @@ class StringColumn(val shortName: String, val fullName: String) extends Column {
 
   def defaultValue = ""
 
+}
+
+class BooleanColumn(val shortName: String, val fullName: String) extends Column {
+  def valueToString(value: Any) = value match {
+    case b: Boolean => b.toString
+  }
+
+  def valueToDouble(value: Any) = value match {
+    case b: Boolean => if (b) 1.0 else 0.0
+  }
+
+  def valueFromString(str: String) = str.toBoolean
+
+  def valueType = ValueType.Boolean
+
+  def defaultValue = false
+}
+
+class CategoricalColumn(val shortName: String, val fullName: String, val values: Seq[String]) extends Column {
+  System.err.println("WARNING(unchecked): Categorical values should not contain tabs, new lines and colons (:).")
+
+  val map: HashMap[String, Int] = new HashMap()
+  map ++= values.zipWithIndex
+
+  def valueToString(value: Any) = value match {
+    case s: String => s
+    case i: Int => values(i)
+  }
+
+  def valueToDouble(value: Any) = value match {
+    case s: String => map(s).toDouble
+    case i: Int => i.toDouble
+  }
+
+  def valueFromString(str: String) = values(map(str)) // checks whether the value exists automatically
+
+  def valueType = ValueType.Categorical
+
+  def defaultValue = values.head
+
+  override def toLine = "%s\t%s".format(super.toLine, values.mkString("\t"))
 }

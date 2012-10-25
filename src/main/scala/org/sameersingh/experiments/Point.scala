@@ -11,13 +11,15 @@ case class Point(val spec: Spec) {
   // map of column id to the data
   val map = new HashMap[Int, Any]
 
-  def apply(colId: Int): Any = map(colId)
+  def apply(colId: Int): Any = map.getOrElse(colId, spec(colId).defaultValue)
 
-  def apply(shortName: String): Any = map(spec.getId(shortName))
+  def apply(shortName: String): Any = apply(spec.getId(shortName))
 
   def double(colId: Int) = spec(colId).valueToDouble(this(colId))
 
-  def value[T](colId: Int): T = map(colId).asInstanceOf[T]
+  def double(shortName: String): Double = double(spec.getId(shortName))
+
+  def value[T](colId: Int): T = apply(colId).asInstanceOf[T]
 
   def value[T](shortName: String): T = value[T](spec.getId(shortName))
 
@@ -54,6 +56,17 @@ case class Point(val spec: Spec) {
     point
   }
 
+  def fromLine(line: String): Unit = {
+    map.clear
+    for (pointStr: String <- line.split("\t").toSeq) {
+      val split = pointStr.split(":")
+      assert(split.length == 2)
+      val colId = split(0).toInt
+      this +=(colId, spec(colId).valueFromString(split(1)))
+    }
+  }
+
+
   override def hashCode() = map.hashCode()
 
   override def equals(p1: Any) = p1 match {
@@ -65,12 +78,7 @@ case class Point(val spec: Spec) {
 object Point {
   def fromLine(line: String, spec: Spec): Point = {
     val point = new Point(spec)
-    for (pointStr: String <- line.split("\t").toSeq) {
-      val split = pointStr.split(":")
-      assert(split.length == 2)
-      val colId = split(0).toInt
-      point +=(colId, spec(colId).valueFromString(split(1)))
-    }
+    point.fromLine(line)
     point
   }
 }

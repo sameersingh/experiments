@@ -1,6 +1,9 @@
 package org.sameersingh.experiments
 
 import collection.mutable.HashMap
+import io.Source
+import java.util.zip.GZIPInputStream
+import java.io.FileInputStream
 
 /**
  * @author sameer
@@ -44,6 +47,13 @@ class AggregatePoint(val fixed: Point) {
   }
 
   def count = n
+
+  def toLines: Seq[String] =
+    Seq("fixed\t" + fixed.toLine,
+      "mean\t" + mean.toLine,
+      "variance\t" + variance.toLine,
+      "M2\t" + M2.toLine,
+      "n\t" + n.toString)
 }
 
 object AggregateExperiments {
@@ -59,5 +69,33 @@ object AggregateExperiments {
       }
     }
     aggre.values.toSeq
+  }
+
+  def fromLines(spec: Spec, lines: Seq[String]): AggregatePoint = {
+    assert(lines.length == 5)
+    // fixed
+    val fixedSplit = lines(0).split("\t")
+    assert(fixedSplit.length == 2)
+    assert(fixedSplit(0) == "fixed")
+    val fixed = Point.fromLine(fixedSplit(1), spec)
+    val agg = new AggregatePoint(fixed)
+    val meanSplit = lines(1).split("\t")
+    assert(meanSplit.length == 2)
+    assert(meanSplit(0) == "mean")
+    agg.mean.fromLine(meanSplit(1))
+    val m2Split = lines(1).split("\t")
+    assert(m2Split.length == 2)
+    assert(m2Split(0) == "M2")
+    agg.M2.fromLine(m2Split(1))
+    val nSplit = lines(1).split("\t")
+    assert(nSplit.length == 2)
+    assert(nSplit(0) == "n")
+    agg.n = nSplit(1).toDouble
+    agg
+  }
+
+  def fromFile(spec:Spec, filename: String, gzip: Boolean = false): Seq[AggregatePoint] = {
+    val source = if (gzip) Source.fromInputStream(new GZIPInputStream(new FileInputStream(filename))) else Source.fromFile(filename)
+    source.getLines().grouped(5).map(ls => fromLines(spec, ls)).toSeq
   }
 }

@@ -35,6 +35,8 @@ object SpecTest {
     s.addIntColumn("run", "Run")
     s.addStringColumn("expType", "Experiment Type")
     s.addDoubleColumn("score", "Score")
+    s.addBooleanColumn("isValid", "Whether the runs were valid or not")
+    s.addCategoricalColumn("dataType", "Type of the data used", Seq("train", "test", "dev"))
     s
   }
 }
