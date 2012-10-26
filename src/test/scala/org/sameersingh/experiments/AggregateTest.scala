@@ -38,8 +38,8 @@ class AggregateTest {
       exp += (p)
     }
     var variance = M2 / (n - 1.0)
-    assertEquals(trueMean, mean, 1.0)
-    assertEquals(trueVariance, variance, 1.0)
+    assertEquals(trueMean, mean, 2.0)
+    assertEquals(trueVariance, variance, 2.0)
 
     val aggs = AggregateExperiments.aggregate(Seq(exp), Seq.empty, Seq("d"))
     assertEquals(1, aggs.size)
@@ -102,10 +102,10 @@ class AggregateTest {
     var variance1 = M21 / (n1 - 1.0)
     var variance2 = M22 / (n2 - 1.0)
     var variance = M2 / (n - 1.0)
-    assertEquals(trueMean1, mean1, 1.0)
-    assertEquals(trueVariance1, variance1, 1.0)
-    assertEquals(trueMean2, mean2, 1.0)
-    assertEquals(trueVariance2, variance2, 1.0)
+    assertEquals(trueMean1, mean1, 2.0)
+    assertEquals(trueVariance1, variance1, 2.0)
+    assertEquals(trueMean2, mean2, 2.0)
+    assertEquals(trueVariance2, variance2, 2.0)
 
     val aggs = AggregateExperiments.aggregate(Seq(exp), Seq("s"), Seq("d"))
     assertEquals(2, aggs.size)
