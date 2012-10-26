@@ -48,6 +48,25 @@ class Experiment(val spec: Spec) extends mutable.Buffer[Point] {
     writer.close
   }
 
+  def toDataFile(filename: String, columns: Seq[String]) {
+    val writer = new PrintWriter(filename)
+    // header
+    writer.print("#")
+    for (col <- columns) {
+      writer.print("\t" + col)
+    }
+    // data
+    for (point <- points) {
+      for (col <- columns) {
+        if (col != columns.head) writer.print("\t")
+        writer.print(point.double(col))
+      }
+      writer.println
+    }
+    writer.flush
+    writer.close
+  }
+
   def values[T](colId: Int): Seq[T] = points.map(_.value[T](colId)).toSeq
 
   def values[T](shortName: String): Seq[T] = values[T](spec.getId(shortName))
