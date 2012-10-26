@@ -28,6 +28,19 @@
       <name>Scala-Tools Maven2 Repository</name>
       <url>http://scala-tools.org/repo-releases</url>
     </repository>
+    <repository>
+      <id>sameer-releases</id>
+      <name>Sameer repository</name>
+      <url>https://github.com/sameersingh/maven-repo/raw/master/releases</url>
+    </repository>
+    <repository>
+      <id>sameer-snapshots</id>
+      <name>Sameer repository</name>
+      <url>https://github.com/sameersingh/maven-repo/raw/master/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -43,6 +56,11 @@
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
       <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sameersingh.scalaplot</groupId>
+      <artifactId>scalaplot</artifactId>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
 
     <!-- Test -->
