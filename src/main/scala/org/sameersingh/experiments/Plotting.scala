@@ -21,11 +21,22 @@ object Plotting {
     new MemXYSeries(xs, ys, seriesName)
   }
 
+  def plotSingleExpMem(exp: Experiment, xcol: String, ycol: String): XYChart = plotSingleExpMem(exp, xcol, ycol, "%s vs %s" format(exp.spec(ycol).fullName, exp.spec(xcol).fullName))
+
   def plotSingleExpMem(experiment: Experiment, xcol: String, ycol: String, chartTitle: String): XYChart = {
     val series = getMemXYSeries(experiment, xcol, ycol)
     val data = new XYData(experiment.spec(xcol).fullName, experiment.spec(ycol).fullName, Seq(series))
     val chart = new XYChart(chartTitle, data)
     chart.showLegend = false
+    chart
+  }
+
+  def plotSingleExpMem(experiment: Experiment, xcol: String, ycols: Iterable[String], ylabel: String, chartTitle: String): XYChart = {
+    val data = new XYData(experiment.spec(xcol).fullName, ylabel)
+    for (ycol <- ycols)
+      data += getMemXYSeries(experiment, xcol, ycol, experiment.spec(ycol).fullName)
+    val chart = new XYChart(chartTitle, data)
+    chart.showLegend = true
     chart
   }
 
