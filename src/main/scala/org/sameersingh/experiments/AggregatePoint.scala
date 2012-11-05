@@ -17,6 +17,13 @@ class AggregatePoint(val fixed: Point) {
 
   def zero: AggregatePoint = new AggregatePoint(fixed)
 
+  def double(colId: Int): Double = {
+    if (fixed.map.contains(colId)) fixed.double(colId)
+    else mean.double(colId)
+  }
+
+  def double(shortName: String): Double = double(spec.getId(shortName))
+
   def accumulate(p: Point): Unit = {
     n += 1
     for (colId <- p.map.keys) {

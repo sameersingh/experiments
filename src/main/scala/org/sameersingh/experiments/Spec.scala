@@ -4,6 +4,7 @@ import collection.mutable.ArrayBuffer
 import collection.mutable.HashMap
 import io.Source
 import java.io.PrintWriter
+import collection.mutable
 
 /**
  * Configuration of the experiments, the different kinds of data that can be stored
@@ -39,7 +40,9 @@ class Spec {
   }
 
   def addCategoricalColumn(shortName: String, fullName: String, values: Seq[String]) = {
-    this += new CategoricalColumn(shortName, fullName, values)
+    val col = new CategoricalColumn(shortName, fullName)
+    values.foreach(v => col.getInt(v))
+    this += col
   }
 
   def getId(shortName: String) = shortNameMap(shortName)
@@ -106,7 +109,10 @@ object Column {
         new BooleanColumn(shortName, fullName)
       case ValueType.Categorical =>
         assert(split.length >= 4)
-        new CategoricalColumn(shortName, fullName, split.drop(3).toSeq) // rest are values
+        val col = new CategoricalColumn(shortName, fullName)
+        for (value <- split.drop(3).toSeq)
+          col.getInt(value)
+        col
     }
   }
 }
@@ -176,23 +182,34 @@ class BooleanColumn(val shortName: String, val fullName: String) extends Column 
   def defaultValue = false
 }
 
-class CategoricalColumn(val shortName: String, val fullName: String, val values: Seq[String]) extends Column {
+class CategoricalColumn(val shortName: String, val fullName: String) extends Column {
   System.err.println("WARNING(unchecked): Categorical values should not contain tabs, new lines and colons (:).")
-
+  val values: mutable.Buffer[String] = new ArrayBuffer
   val map: HashMap[String, Int] = new HashMap()
-  map ++= values.zipWithIndex
+
+  def getInt(str: String): Int = {
+    if (map.contains(str)) map(str)
+    else {
+      values += str
+      map(str) = values.length - 1
+      values.length - 1
+    }
+  }
 
   def valueToString(value: Any) = value match {
     case s: String => s
-    case i: Int => values(i)
+    case i: Int => {
+      assert(i < values.length)
+      values(i)
+    }
   }
 
   def valueToDouble(value: Any) = value match {
-    case s: String => map(s).toDouble
+    case s: String => getInt(s).toDouble
     case i: Int => i.toDouble
   }
 
-  def valueFromString(str: String) = values(map(str)) // checks whether the value exists automatically
+  def valueFromString(str: String) = values(getInt(str)) // adds it if its not there
 
   def valueType = ValueType.Categorical
 
