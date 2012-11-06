@@ -29,6 +29,10 @@ class SpecTest {
 }
 
 object SpecTest {
+  object Enum extends Enumeration {
+    val One, Two, Three, Four = Value
+  }
+
   def spec = {
     val s = new Spec
     s.addIntColumn("id", "Id")
@@ -37,6 +41,7 @@ object SpecTest {
     s.addDoubleColumn("score", "Score")
     s.addBooleanColumn("isValid", "Whether the runs were valid or not")
     s.addCategoricalColumn("dataType", "Type of the data used", Seq("train", "test", "dev"))
+    s.addEnumColumn("count", "I know how to count!", Enum)
     s
   }
 }

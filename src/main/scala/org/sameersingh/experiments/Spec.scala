@@ -45,6 +45,10 @@ class Spec {
     this += col
   }
 
+  def addEnumColumn(shortName: String, fullName: String, enum: Enumeration) = {
+    this += new EnumerationColumn(shortName, fullName, enum)
+  }
+
   def getId(shortName: String) = shortNameMap(shortName)
 
   def apply(shortName: String): Column = apply(shortNameMap(shortName))
@@ -68,7 +72,7 @@ class Spec {
 
 object ValueType extends Enumeration {
   type Type = Value
-  val Integer, Double, String, Boolean, Categorical = Value
+  val Integer, Double, String, Boolean, Categorical, Enumeration = Value
 }
 
 abstract class Column {
@@ -94,25 +98,32 @@ object Column {
     val split = string.split("\t")
     val shortName = split(1)
     val fullName = split(2)
+    val remaining = split.drop(3)
     ValueType.withName(split(0)) match {
       case ValueType.Integer =>
-        assert(split.length == 3)
+        assert(remaining.length == 0)
         new IntColumn(shortName, fullName)
       case ValueType.Double =>
-        assert(split.length == 3)
+        assert(remaining.length == 0)
         new DoubleColumn(shortName, fullName)
       case ValueType.String =>
-        assert(split.length == 3)
+        assert(remaining.length == 0)
         new StringColumn(shortName, fullName)
       case ValueType.Boolean =>
-        assert(split.length == 3)
+        assert(remaining.length == 0)
         new BooleanColumn(shortName, fullName)
       case ValueType.Categorical =>
-        assert(split.length >= 4)
+        assert(remaining.length >= 1)
         val col = new CategoricalColumn(shortName, fullName)
-        for (value <- split.drop(3).toSeq)
+        for (value <- remaining.toSeq)
           col.getInt(value)
         col
+      case ValueType.Enumeration =>
+        assert(remaining.length >= 1)
+        val enum = new Enumeration() {
+          remaining.foreach(s => Value(s))
+        }
+        new EnumerationColumn(shortName, fullName, enum)
     }
   }
 }
@@ -197,11 +208,8 @@ class CategoricalColumn(val shortName: String, val fullName: String) extends Col
   }
 
   def valueToString(value: Any) = value match {
-    case s: String => s
-    case i: Int => {
-      assert(i < values.length)
-      values(i)
-    }
+    case s: String => getInt(s).toString
+    case i: Int => i.toString
   }
 
   def valueToDouble(value: Any) = value match {
@@ -209,11 +217,29 @@ class CategoricalColumn(val shortName: String, val fullName: String) extends Col
     case i: Int => i.toDouble
   }
 
-  def valueFromString(str: String) = values(getInt(str)) // adds it if its not there
+  def valueFromString(str: String) = values(str.toInt) // adds it if its not there
 
   def valueType = ValueType.Categorical
 
-  def defaultValue = values.head
+  def defaultValue = 0
 
   override def toLine = "%s\t%s".format(super.toLine, values.mkString("\t"))
+}
+
+class EnumerationColumn(val shortName: String, val fullName: String, val enum: Enumeration) extends Column {
+  def valueType = ValueType.Enumeration
+
+  def defaultValue = enum.apply(0)
+
+  def valueToDouble(value: Any) = value match {
+    case v: enum.Value => v.id.toDouble
+  }
+
+  def valueToString(value: Any) = value match {
+    case v: enum.Value => v.id.toString
+  }
+
+  def valueFromString(str: String) = enum(str.toInt)
+
+  override def toLine = "%s\t%s".format(super.toLine, enum.values.mkString("\t"))
 }

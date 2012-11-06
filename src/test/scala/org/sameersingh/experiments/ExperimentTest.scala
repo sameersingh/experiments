@@ -25,15 +25,18 @@ class ExperimentTest {
       point +=("run", i / 3)
       point +=("expType", random.nextBoolean().toString)
       point +=("score", random.nextDouble())
+      point +=("isValid", random.nextBoolean())
+      point +=("dataType", Seq("train", "test", "dev")(random.nextInt(3)))
+      point +=("count", SpecTest.Enum(random.nextInt(SpecTest.Enum.values.toSeq.length)))
       exp += point
     }
-    exp.toFile(testFile.getCanonicalPath, true)
-
+    exp.toFile(testFile.getCanonicalPath, false)
+    println(exp.length)
     val nexp = new Experiment(spec)
-    nexp.fromFile(testFile.getCanonicalPath, true)
-
+    nexp.fromFile(testFile.getCanonicalPath, false)
+    println(nexp.length)
     for (point <- nexp) {
-      println(point.toLine)
+      println(point.toLine(true))
     }
   }
 
