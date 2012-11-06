@@ -36,14 +36,15 @@ case class Point(val spec: Spec) {
     +=(spec.getId(shortName), value)
   }
 
-  def toLine: String = {
+  def toLine(verbose: Boolean = false): String = {
+    def print(cid: Int, v: Any): String = if (verbose) v.toString else spec(cid).valueToString(v)
     val sb = new StringBuffer()
     var first = true
     for (value: Pair[Int, Any] <- map.toList.sortBy(_._1)) {
       if (first) {
-        sb.append("%d:%s".format(value._1, spec(value._1).valueToString(value._2)))
+        sb.append("%d:%s".format(value._1, print(value._1, value._2)))
         first = false
-      } else sb.append("\t%d:%s".format(value._1, spec(value._1).valueToString(value._2)))
+      } else sb.append("\t%d:%s".format(value._1, print(value._1, value._2)))
     }
     sb.toString
   }
@@ -65,7 +66,6 @@ case class Point(val spec: Spec) {
       this +=(colId, spec(colId).valueFromString(split(1)))
     }
   }
-
 
   override def hashCode() = map.hashCode()
 

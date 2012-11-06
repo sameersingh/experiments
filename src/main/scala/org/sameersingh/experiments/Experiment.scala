@@ -42,7 +42,7 @@ class Experiment(val spec: Spec) extends mutable.Buffer[Point] {
     val outputStream = if (gzip) new GZIPOutputStream(new FileOutputStream(filename)) else new FileOutputStream(filename)
     val writer = new PrintWriter(outputStream)
     for (point <- points) {
-      writer.println(point.toLine)
+      writer.println(point.toLine())
     }
     writer.flush
     writer.close

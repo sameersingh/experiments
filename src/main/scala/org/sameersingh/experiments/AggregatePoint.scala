@@ -56,10 +56,10 @@ class AggregatePoint(val fixed: Point) {
   def count = n
 
   def toLines: Seq[String] =
-    Seq("fixed\t" + fixed.toLine,
-      "mean\t" + mean.toLine,
-      "variance\t" + variance.toLine,
-      "M2\t" + M2.toLine,
+    Seq("fixed\t" + fixed.toLine(),
+      "mean\t" + mean.toLine(),
+      "variance\t" + variance.toLine(),
+      "M2\t" + M2.toLine(),
       "n\t" + n.toString)
 }
 
