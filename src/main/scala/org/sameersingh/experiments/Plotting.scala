@@ -10,7 +10,9 @@ import collection.mutable.HashMap
  */
 object Plotting {
 
-  def getMemXYSeries(experiment: Experiment, xcol: String, ycol: String, seriesName: String = "default"): MemXYSeries = {
+  def getMemXYSeries(exp:Experiment, xcol:String, ycol:String): MemXYSeries = getMemXYSeries(exp, xcol, ycol, exp.spec(ycol).fullName)
+
+  def getMemXYSeries(experiment: Experiment, xcol: String, ycol: String, seriesName: String): MemXYSeries = {
     val xcolId = experiment.spec.getId(xcol)
     val ycolId = experiment.spec.getId(ycol)
     val xs = new ArrayBuffer[Double]()
@@ -23,7 +25,7 @@ object Plotting {
   }
 
   def plotSingleExpMem(experiment: Experiment, xcol: String, ycol: String): XYChart = {
-    plotSingleExpMem(experiment, xcol, ycol, "% vs %s" format(experiment.spec(ycol).fullName, experiment.spec(xcol).fullName))
+    plotSingleExpMem(experiment, xcol, ycol, "%s vs %s" format(experiment.spec(ycol).fullName, experiment.spec(xcol).fullName))
   }
 
   def plotSingleExpMem(experiment: Experiment, xcol: String, ycols: Seq[String], ytitle: String, chartTitle: String): XYChart = {
