@@ -1,6 +1,7 @@
 package org.sameersingh.experiments
 
 import collection.mutable.HashMap
+import com.codahale.jerkson.Json
 
 /**
  * A single set of experiment results, a "data point" for the results
@@ -38,7 +39,7 @@ case class Point(val spec: Spec) {
 
   def toLine(verbose: Boolean = false): String = {
     def print(cid: Int, v: Any): String = if (verbose) v.toString else spec(cid).valueToString(v)
-    val sb = new StringBuffer()
+    /*val sb = new StringBuffer()
     var first = true
     for (value: Pair[Int, Any] <- map.toList.sortBy(_._1)) {
       if (first) {
@@ -46,7 +47,8 @@ case class Point(val spec: Spec) {
         first = false
       } else sb.append("\t%d:%s".format(value._1, print(value._1, value._2)))
     }
-    sb.toString
+    sb.toString*/
+    Json.generate(map.map(value => (value._1.toString, print(value._1, value._2))))
   }
 
   def copyTrunc(colIds: Iterable[Int]): Point = {
@@ -59,11 +61,15 @@ case class Point(val spec: Spec) {
 
   def fromLine(line: String): Unit = {
     map.clear
-    for (pointStr: String <- line.split("\t").toSeq) {
+    /*for (pointStr: String <- line.split("\t").toSeq) {
       val split = pointStr.split(":")
       assert(split.length == 2)
       val colId = split(0).toInt
       this +=(colId, spec(colId).valueFromString(split(1)))
+    }*/
+    for((col, value) <- Json.parse[Map[String,String]](line)) {
+      val colId = col.toInt
+      map(colId) = spec(colId).valueFromString(value)
     }
   }
 

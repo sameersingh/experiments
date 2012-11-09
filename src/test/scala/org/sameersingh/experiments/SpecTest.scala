@@ -13,7 +13,7 @@ class SpecTest {
 
   @Test
   def testWrite(): Unit = {
-    val testFile = java.io.File.createTempFile("test", "spec")
+    val testFile = java.io.File.createTempFile("spec", "exps")
     println(testFile.getCanonicalPath)
     val spec = SpecTest.spec
     spec.toFile(testFile.getAbsolutePath)

@@ -161,7 +161,7 @@ class DoubleColumn(val shortName: String, val fullName: String) extends Column {
 }
 
 class StringColumn(val shortName: String, val fullName: String) extends Column {
-  System.err.println("WARNING(unchecked): String columns should not contain tabs, new lines and colons (:).")
+  System.err.println("WARNING(unchecked): String columns should not contain new lines.")
 
   def valueToString(value: Any) = value match {
     case str: String => str

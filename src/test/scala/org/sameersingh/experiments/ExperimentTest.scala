@@ -14,7 +14,7 @@ class ExperimentTest {
 
   @Test
   def testWrite(): Unit = {
-    val testFile = java.io.File.createTempFile("test", "exps")
+    val testFile = java.io.File.createTempFile("exp", "exps")
     println(testFile.getCanonicalPath)
     val spec = SpecTest.spec
     val exp = new Experiment(spec)

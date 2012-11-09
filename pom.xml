@@ -41,6 +41,11 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <!-- for jerkson -->
+    <repository>
+      <id>repo.codahale.com</id>
+      <url>http://repo.codahale.com</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -61,6 +66,11 @@
       <groupId>org.sameersingh.scalaplot</groupId>
       <artifactId>scalaplot</artifactId>
       <version>0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.codahale</groupId>
+      <artifactId>jerkson_${scala.version}</artifactId>
+      <version>0.5.0</version>
     </dependency>
 
     <!-- Test -->
