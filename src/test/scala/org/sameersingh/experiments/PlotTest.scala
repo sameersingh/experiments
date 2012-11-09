@@ -30,7 +30,7 @@ class PlotTest {
     }
     val chart = Plotting.plotSingleExpMem(exp, "id", "score", "See Score Improve")
     val plotter = new GnuplotPlotter(chart)
-    val testFile = java.io.File.createTempFile("test", "exps")
+    val testFile = java.io.File.createTempFile("plot", "exps")
     println(testFile.getCanonicalPath)
     plotter.writeToPdf(testFile.getCanonicalPath)
   }
@@ -56,7 +56,7 @@ class PlotTest {
     val chart = Plotting.plotExpMem(exps, "id", "score", "expType", "See Score Improve")
     chart.legendPosX = LegendPosX.Left
     val plotter = new GnuplotPlotter(chart)
-    val testFile = java.io.File.createTempFile("test", "exps")
+    val testFile = java.io.File.createTempFile("plot", "exps")
     println(testFile.getCanonicalPath)
     plotter.writeToPdf(testFile.getCanonicalPath)
   }

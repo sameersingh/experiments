@@ -21,7 +21,9 @@ object Plotting {
       xs += p.double(xcolId)
       ys += p.double(ycolId)
     }
-    new MemXYSeries(xs, ys, seriesName)
+    val s = new MemXYSeries(xs, ys, seriesName)
+    s.plotStyle = XYPlotStyle.Lines
+    s
   }
 
   def plotSingleExpMem(experiment: Experiment, xcol: String, ycol: String): XYChart = {
@@ -35,6 +37,7 @@ object Plotting {
     }
     val data = new XYData(experiment.spec(xcol).fullName, ytitle, serieses)
     val chart = new XYChart(chartTitle, data)
+    chart.size = Some((4.0,4.0))
     chart.showLegend = true
     chart
   }
@@ -43,6 +46,7 @@ object Plotting {
     val series = getMemXYSeries(experiment, xcol, ycol)
     val data = new XYData(experiment.spec(xcol).fullName, experiment.spec(ycol).fullName, Seq(series))
     val chart = new XYChart(chartTitle, data)
+    chart.size = Some((4.0,4.0))
     chart.showLegend = false
     chart
   }
@@ -54,9 +58,10 @@ object Plotting {
   def plotExpMem(exps: Seq[Experiment], xcol: String, ycol: String, seriesNameCol: String, chartTitle: String): XYChart = {
     val data = new XYData(exps.head.spec(xcol).fullName, exps.head.spec(ycol).fullName)
     for (exp <- exps) {
-      data += getMemXYSeries(exp, xcol, ycol, exp.points.head.value[String](seriesNameCol))
+      data += getMemXYSeries(exp, xcol, ycol, exp.points.head(seriesNameCol).toString)
     }
     val chart = new XYChart(chartTitle, data)
+    chart.size = Some((4.0,4.0))
     chart.showLegend = true
     chart
   }
@@ -84,6 +89,7 @@ object Plotting {
       data += new MemXYSeries(xs, ys, sname)
     }
     val chart = new XYChart(chartTitle, data)
+    chart.size = Some((4.0,4.0))
     chart.showLegend = true
     chart
   }
