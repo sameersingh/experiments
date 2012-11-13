@@ -59,7 +59,7 @@ case class Point(val spec: Spec) {
     point
   }
 
-  def fromLine(line: String): Unit = {
+  def fromLine(line: String, excludes: Set[Int] = Set.empty): Unit = {
     map.clear
     /*for (pointStr: String <- line.split("\t").toSeq) {
       val split = pointStr.split(":")
@@ -67,24 +67,27 @@ case class Point(val spec: Spec) {
       val colId = split(0).toInt
       this +=(colId, spec(colId).valueFromString(split(1)))
     }*/
-    for((col, value) <- Json.parse[Map[String,String]](line)) {
+    for ((col, value) <- Json.parse[Map[String, String]](line)) {
       val colId = col.toInt
-      map(colId) = spec(colId).valueFromString(value)
+      if (excludes.size == 0 || !excludes(colId))
+        map(colId) = spec(colId).valueFromString(value)
     }
   }
 
-  override def hashCode() = map.hashCode()
+  override def hashCode() = map.toSeq.hashCode()
 
   override def equals(p1: Any) = p1 match {
-    case p: Point => (p.spec equals spec) && (p.map equals map)
+    case p: Point => (p.map.size == map.size) &&
+          map.forall(v => p.map(v._1).toString equals v._2.toString) &&
+          p.map.forall(v => map(v._1).toString equals v._2.toString) //(p.spec equals spec) &&
     case _ => false
   }
 }
 
 object Point {
-  def fromLine(line: String, spec: Spec): Point = {
+  def fromLine(line: String, spec: Spec, excludes: Set[Int] = Set.empty): Point = {
     val point = new Point(spec)
-    point.fromLine(line)
+    point.fromLine(line, excludes)
     point
   }
 }

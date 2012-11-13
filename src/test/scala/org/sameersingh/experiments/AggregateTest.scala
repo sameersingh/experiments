@@ -126,4 +126,34 @@ class AggregateTest {
     assertEquals(variance, sameAgg(0).variance.double("d"), 0.0000001)
   }
 
+  @Test
+  def testPointEquals() {
+    val spec = new Spec
+    spec.addDoubleColumn("d", "Double")
+    spec.addStringColumn("s", "String")
+    spec.addStringColumn("f", "String")
+
+    val p1 = new Point(spec)
+    val p2 = new Point(spec)
+
+    p1("s") = "sameer"
+    p2("s") = "sameer"
+
+    assertTrue(p1 == p2)
+    assertTrue(p1.hashCode() == p2.hashCode)
+
+    p1("f") = "roxxx"
+    p2("f") = "roxxx"
+
+    assertTrue(p1 == p2)
+    assertTrue(p1.hashCode() == p2.hashCode)
+
+    p1("d") = 37.0
+    p2("d") = 37.0
+
+    assertTrue(p1 == p2)
+    assertTrue(p1.hashCode() == p2.hashCode)
+
+  }
+
 }

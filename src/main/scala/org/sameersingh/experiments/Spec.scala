@@ -131,12 +131,14 @@ object Column {
 class IntColumn(val shortName: String, val fullName: String) extends Column {
   def valueToString(value: Any) = value match {
     case i: Int => i.toString()
+    case d: Double => d.toString
   }
 
   def valueFromString(str: String) = str.toInt
 
   def valueToDouble(value: Any) = value match {
     case i: Int => i.toDouble
+    case d: Double => d
   }
 
   def valueType = ValueType.Integer
@@ -165,6 +167,7 @@ class StringColumn(val shortName: String, val fullName: String) extends Column {
 
   def valueToString(value: Any) = value match {
     case str: String => str
+    case d: Double => d.toString
   }
 
   def valueToDouble(value: Any) = throw new Error("not implemented")
@@ -180,9 +183,11 @@ class StringColumn(val shortName: String, val fullName: String) extends Column {
 class BooleanColumn(val shortName: String, val fullName: String) extends Column {
   def valueToString(value: Any) = value match {
     case b: Boolean => b.toString
+    case d: Double => d.toString
   }
 
   def valueToDouble(value: Any) = value match {
+    case d: Double => d
     case b: Boolean => if (b) 1.0 else 0.0
   }
 
@@ -210,9 +215,11 @@ class CategoricalColumn(val shortName: String, val fullName: String) extends Col
   def valueToString(value: Any) = value match {
     case s: String => getInt(s).toString
     case i: Int => i.toString
+    case d: Double => d.toString
   }
 
   def valueToDouble(value: Any) = value match {
+    case d: Double => d
     case s: String => getInt(s).toDouble
     case i: Int => i.toDouble
   }
@@ -232,11 +239,13 @@ class EnumerationColumn(val shortName: String, val fullName: String, val enum: E
   def defaultValue = enum.apply(0)
 
   def valueToDouble(value: Any) = value match {
+    case d: Double => d
     case v: enum.Value => v.id.toDouble
   }
 
   def valueToString(value: Any) = value match {
     case v: enum.Value => v.id.toString
+    case d: Double => d.toString
   }
 
   def valueFromString(str: String) = enum(str.toInt)

@@ -10,7 +10,7 @@ import collection.mutable.HashMap
  */
 object Plotting {
 
-  def getMemXYSeries(exp:Experiment, xcol:String, ycol:String): MemXYSeries = getMemXYSeries(exp, xcol, ycol, exp.spec(ycol).fullName)
+  def getMemXYSeries(exp: Experiment, xcol: String, ycol: String): MemXYSeries = getMemXYSeries(exp, xcol, ycol, exp.spec(ycol).fullName)
 
   def getMemXYSeries(experiment: Experiment, xcol: String, ycol: String, seriesName: String): MemXYSeries = {
     val xcolId = experiment.spec.getId(xcol)
@@ -37,7 +37,7 @@ object Plotting {
     }
     val data = new XYData(experiment.spec(xcol).fullName, ytitle, serieses)
     val chart = new XYChart(chartTitle, data)
-    chart.size = Some((4.0,4.0))
+    chart.size = Some((5.0, 4.0))
     chart.showLegend = true
     chart
   }
@@ -46,7 +46,7 @@ object Plotting {
     val series = getMemXYSeries(experiment, xcol, ycol)
     val data = new XYData(experiment.spec(xcol).fullName, experiment.spec(ycol).fullName, Seq(series))
     val chart = new XYChart(chartTitle, data)
-    chart.size = Some((4.0,4.0))
+    chart.size = Some((5.0, 4.0))
     chart.showLegend = false
     chart
   }
@@ -61,7 +61,7 @@ object Plotting {
       data += getMemXYSeries(exp, xcol, ycol, exp.points.head(seriesNameCol).toString)
     }
     val chart = new XYChart(chartTitle, data)
-    chart.size = Some((4.0,4.0))
+    chart.size = Some((5.0, 4.0))
     chart.showLegend = true
     chart
   }
@@ -80,16 +80,17 @@ object Plotting {
     // series name -> x and y
     val smap = new HashMap[String, (ArrayBuffer[Double], ArrayBuffer[Double])]
     for (p <- aggrs) {
-      val (xs, ys) = smap.getOrElseUpdate(p.fixed.value[String](seriesNameCol), Pair(new ArrayBuffer, new ArrayBuffer))
+      val (xs, ys) = smap.getOrElseUpdate(p.fixed(seriesNameCol).toString, Pair(new ArrayBuffer, new ArrayBuffer))
       xs += p.double(xcolId)
       ys += p.double(ycolId)
     }
-
+    //println
     for ((sname, (xs, ys)) <- smap) {
-      data += new MemXYSeries(xs, ys, sname)
+      val sorted = (xs zip ys).sortBy(p => p._1)
+      data += new MemXYSeries(sorted.map(_._1), sorted.map(_._2), sname)
     }
     val chart = new XYChart(chartTitle, data)
-    chart.size = Some((4.0,4.0))
+    chart.size = Some((5.0, 4.0))
     chart.showLegend = true
     chart
   }

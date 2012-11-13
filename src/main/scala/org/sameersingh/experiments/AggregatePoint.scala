@@ -66,9 +66,9 @@ class AggregatePoint(val fixed: Point) {
 object AggregateExperiments {
   def aggregate(exps: Seq[Experiment], fixedCols: Seq[String], aggrOver: Seq[String], cond: (Point) => Boolean = p => true): Seq[AggregatePoint] = {
     val aggre: HashMap[Point, AggregatePoint] = new HashMap
-    val fixedColIds = fixedCols.map(exps.head.spec.getId(_))
-    val aggrOverIds = aggrOver.map(exps.head.spec.getId(_))
     for (exp <- exps) {
+      val fixedColIds = fixedCols.map(exp.spec.getId(_))
+      val aggrOverIds = aggrOver.map(exp.spec.getId(_))
       for (p <- exp.points) {
         if (cond(p)) {
           val fixed = p.copyTrunc(fixedColIds)

@@ -32,10 +32,11 @@ class Experiment(val spec: Spec) extends mutable.Buffer[Point] {
     exp
   }
 
-  def fromFile(filename: String, gzip: Boolean = false) {
+  def fromFile(filename: String, gzip: Boolean = false, excludes: Set[String] = Set.empty) {
     val source = if (gzip) Source.fromInputStream(new GZIPInputStream(new FileInputStream(filename))) else Source.fromFile(filename)
+    val excludeColIds = excludes.map(s => spec.getId(s)).toSet
     for (line <- source.getLines())
-      this += Point.fromLine(line, spec)
+      this += Point.fromLine(line, spec, excludeColIds)
   }
 
   def toFile(filename: String, gzip: Boolean = false) {
@@ -55,6 +56,7 @@ class Experiment(val spec: Spec) extends mutable.Buffer[Point] {
     for (col <- columns) {
       writer.print("\t" + col)
     }
+    writer.println
     // data
     for (point <- points) {
       for (col <- columns) {
