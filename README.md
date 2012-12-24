@@ -5,6 +5,14 @@ experiments
 
 ## Installation
 
+```xml
+<dependency>
+  <groupId>org.sameersingh.experiments</groupId>
+  <artifactId>experiments</artifactId>
+  <version>0.1-SNAPSHOT</version>
+</dependency>
+```
+
 ## Basic Usage
 
 For the most part, this project acts like a simple, single-table DB.
