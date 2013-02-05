@@ -38,6 +38,7 @@ case class Point(val spec: Spec) {
   }
 
   def toLine(verbose: Boolean = false): String = {
+    def printCol(cid: Int): String = if (verbose) spec(cid).shortName else cid.toString
     def print(cid: Int, v: Any): String = if (verbose) v.toString else spec(cid).valueToString(v)
     /*val sb = new StringBuffer()
     var first = true
@@ -48,7 +49,7 @@ case class Point(val spec: Spec) {
       } else sb.append("\t%d:%s".format(value._1, print(value._1, value._2)))
     }
     sb.toString*/
-    Json.generate(map.map(value => (value._1.toString, print(value._1, value._2))))
+    Json.generate(map.map(value => (printCol(value._1), print(value._1, value._2))))
   }
 
   def copyTrunc(colIds: Iterable[Int]): Point = {
