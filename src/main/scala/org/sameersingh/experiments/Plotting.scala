@@ -35,7 +35,7 @@ object Plotting {
     for (ycol <- ycols) {
       serieses += getMemXYSeries(experiment, xcol, ycol)
     }
-    val data = new XYData(serieses)
+    val data = new XYData(serieses: _*)
     val chart = new XYChart(chartTitle, data)
     chart.xlabel = experiment.spec(xcol).fullName
     chart.ylabel = ytitle
@@ -46,7 +46,7 @@ object Plotting {
 
   def plotSingleExpMem(experiment: Experiment, xcol: String, ycol: String, chartTitle: String): XYChart = {
     val series = getMemXYSeries(experiment, xcol, ycol)
-    val data = new XYData(Seq(series))
+    val data = new XYData(series)
     val chart = new XYChart(chartTitle, data)
     chart.xlabel = experiment.spec(xcol).fullName
     chart.ylabel = experiment.spec(ycol).fullName

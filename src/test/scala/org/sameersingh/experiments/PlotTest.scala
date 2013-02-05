@@ -32,7 +32,7 @@ class PlotTest {
     val plotter = new GnuplotPlotter(chart)
     val testFile = java.io.File.createTempFile("plot", "exps")
     println(testFile.getCanonicalPath)
-    plotter.writeToPdf(testFile.getCanonicalPath)
+    plotter.writeToPdf(testFile)
   }
 
   @Test
@@ -58,7 +58,7 @@ class PlotTest {
     val plotter = new GnuplotPlotter(chart)
     val testFile = java.io.File.createTempFile("plot", "exps")
     println(testFile.getCanonicalPath)
-    plotter.writeToPdf(testFile.getCanonicalPath)
+    plotter.writeToPdf(testFile)
   }
 
 }
