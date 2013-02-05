@@ -35,18 +35,22 @@ object Plotting {
     for (ycol <- ycols) {
       serieses += getMemXYSeries(experiment, xcol, ycol)
     }
-    val data = new XYData(experiment.spec(xcol).fullName, ytitle, serieses)
+    val data = new XYData(serieses)
     val chart = new XYChart(chartTitle, data)
-    chart.size = Some((5.0, 4.0))
+    chart.xlabel = experiment.spec(xcol).fullName
+    chart.ylabel = ytitle
+    chart.size = Some((3.75, 3.0))
     chart.showLegend = true
     chart
   }
 
   def plotSingleExpMem(experiment: Experiment, xcol: String, ycol: String, chartTitle: String): XYChart = {
     val series = getMemXYSeries(experiment, xcol, ycol)
-    val data = new XYData(experiment.spec(xcol).fullName, experiment.spec(ycol).fullName, Seq(series))
+    val data = new XYData(Seq(series))
     val chart = new XYChart(chartTitle, data)
-    chart.size = Some((5.0, 4.0))
+    chart.xlabel = experiment.spec(xcol).fullName
+    chart.ylabel = experiment.spec(ycol).fullName
+    chart.size = Some((3.75, 3.0))
     chart.showLegend = false
     chart
   }
@@ -56,12 +60,14 @@ object Plotting {
   }
 
   def plotExpMem(exps: Seq[Experiment], xcol: String, ycol: String, seriesNameCol: String, chartTitle: String): XYChart = {
-    val data = new XYData(exps.head.spec(xcol).fullName, exps.head.spec(ycol).fullName)
+    val data = new XYData()
     for (exp <- exps) {
       data += getMemXYSeries(exp, xcol, ycol, exp.points.head(seriesNameCol).toString)
     }
     val chart = new XYChart(chartTitle, data)
-    chart.size = Some((5.0, 4.0))
+    chart.xlabel = exps.head.spec(xcol).fullName
+    chart.ylabel = exps.head.spec(ycol).fullName
+    chart.size = Some((3.75, 3.0))
     chart.showLegend = true
     chart
   }
@@ -76,7 +82,7 @@ object Plotting {
     val xcolId = spec.getId(xcol)
     val ycolId = spec.getId(ycol)
 
-    val data = new XYData(spec(xcol).fullName, spec(ycol).fullName)
+    val data = new XYData()
     // series name -> x and y
     val smap = new HashMap[String, (ArrayBuffer[Double], ArrayBuffer[Double])]
     for (p <- aggrs) {
@@ -90,7 +96,9 @@ object Plotting {
       data += new MemXYSeries(sorted.map(_._1), sorted.map(_._2), sname)
     }
     val chart = new XYChart(chartTitle, data)
-    chart.size = Some((5.0, 4.0))
+    chart.xlabel = spec(xcol).fullName
+    chart.ylabel = spec(ycol).fullName
+    chart.size = Some((3.75, 3.0))
     chart.showLegend = true
     chart
   }
