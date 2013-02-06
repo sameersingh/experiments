@@ -103,4 +103,35 @@ object Plotting {
     chart
   }
 
+  def plotAggregate(aggrs: Seq[AggregatePoint], xcol: String, ycols: Seq[String], ytitle: String, chartTitle: String): XYChart = {
+    val spec: Spec = aggrs.head.spec
+
+    val xcolId = spec.getId(xcol)
+    val ycolIds = ycols.map(ycol => spec.getId(ycol))
+
+    val data = new XYData()
+    // series name -> x and y
+    for (ycolId <- ycolIds) {
+      val xs = new ArrayBuffer[Double]()
+      val ys = new ArrayBuffer[Double]()
+      for (p <- aggrs) {
+        xs += p.double(xcolId)
+        ys += p.double(ycolId)
+      }
+      val sorted = (xs zip ys).sortBy(p => p._1)
+      data += new MemXYSeries(sorted.map(_._1), sorted.map(_._2), spec(ycolId).fullName)
+    }
+    //println
+    //for ((sname, (xs, ys)) <- smap) {
+    //  val sorted = (xs zip ys).sortBy(p => p._1)
+    //  data += new MemXYSeries(sorted.map(_._1), sorted.map(_._2), sname)
+    //}
+    val chart = new XYChart(chartTitle, data)
+    chart.xlabel = spec(xcol).fullName
+    chart.ylabel = ytitle
+    chart.size = Some((3.75, 3.0))
+    chart.showLegend = true
+    chart
+  }
+
 }
