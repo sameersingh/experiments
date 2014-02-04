@@ -1,7 +1,7 @@
 package org.sameersingh.experiments
 
 import collection.mutable.HashMap
-import com.codahale.jerkson.Json
+import org.sameersingh.utils.misc.Json
 
 /**
  * A single set of experiment results, a "data point" for the results
